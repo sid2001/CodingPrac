@@ -10,6 +10,8 @@ int main(){
     unsigned long long ele;
     unsigned long long mi = 0 ;
     cin>>ele;
+    int e = ele;
+    int zeroCount = 0;
     int first = 1;
     unsigned long long m = 0;
     vector<unsigned long long> vec;
@@ -24,22 +26,25 @@ int main(){
       }
       else    
         mi = min(x,mi);
-      if(x==0)
+      if(x==0){
+        zeroCount++;
         continue;
+      }
       product *= x;
     }
-    if(mi>0){
-      product = (product/mi) * (mi+1);
+    unsigned long long pro =  product;
+    if(m==0||zeroCount>1){
+      if(e==1)    product = 1;
+      else product = 0;
     }
-    if(m==0)
-      cout<<product*0<<endl;
-    else cout<<product<<endl;
+    else if(mi>0){
+      for(auto i : vec){
+        product = max((pro/i)* (i+1),product);
+      }
+    }
+    
+    cout<<product<<endl;
 
-    // unsigned long long pro =  product;
-    // if(mi>0){
-    //   for(auto i : vec){
-    //     product = max((pro/i)* (i+1),product);
-    //   }
-    // }
+    
   }
 }
