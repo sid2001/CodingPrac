@@ -1,5 +1,6 @@
 // T(n) = O(nlogn)
 #include <bits/stdc++.h>
+#include "myFunctions.h"
 
 using namespace std;
 
@@ -24,7 +25,7 @@ void maxHeapify(vector<int> &vec, int i, int size)
   }
   else
     largest = i;
-  if (right <= size && vec[right - 1] > vec[largest])
+  if (right <= size && vec[right - 1] > vec[largest - 1])
     largest = right;
   if (largest != i)
   {
@@ -54,17 +55,17 @@ void print(vector<int> &vec)
   return;
 }
 
-int main()
-{
-  int size;
-  cin >> size;
+// int main()
+// {
+//   int size;
+//   cin >> size;
 
-  vector<int> vec(size);
-  for (int i; i < size; i++)
-  {
-    cin >> vec[i];
-  }
-  print(vec);
-  buildMaxHeap(vec, size);
-  print(vec);
-}
+//   vector<int> vec(size);
+//   for (int i; i < size; i++)
+//   {
+//     cin >> vec[i];
+//   }
+//   print(vec);
+//   buildMaxHeap(vec, size);
+//   print(vec);
+// }
