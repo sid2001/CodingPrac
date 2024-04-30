@@ -39,5 +39,5 @@ void kmp(string &str,string &pat){
 int main(){
   string pat,str;
   cin>>str>>pat;
-  kmp(str,pat)
+  kmp(str,pat);
 }
