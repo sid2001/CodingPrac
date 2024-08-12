@@ -22,8 +22,8 @@ int solve(vector<int> &vec, int x, int idx,vector<vector<int>> &dp) {
 }
 
 int comparefn(int l1, int l2) {
-  if(l1>l2) return 0;
-  else return 1;
+  if(l1>l2) return 1;
+  else return 0;
 }
 
 int main() {
