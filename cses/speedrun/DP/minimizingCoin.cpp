@@ -7,13 +7,13 @@ using namespace std;
 int solve(vector<int> &vec, int x, int idx,vector<vector<int>> &dp) {
   if(idx == 0) {
     if(x % vec[idx] == 0) return x / vec[0];
-    else return 1e+6;
+    else return 1e+6 + 1;
   }
 
   if(dp[idx][x] != -1) return dp[idx][x];
 
   int skip = 0 + solve(vec,x,idx-1,dp);
-  int not_skip = 1e+6; 
+  int not_skip = 1e+6 + 1; 
   if(vec[idx] <= x) {
     not_skip = 1 + solve(vec,x-vec[idx],idx,dp); 
   }
@@ -38,5 +38,5 @@ int main() {
 
   sort(vec.begin(),vec.end(),comparefn);
   int ans = solve(vec,x,n-1,dp);
-  cout<<(ans>=1e+6?-1:ans);
+  cout<<(ans>1e+6?-1:ans);
 }
