@@ -1,33 +1,41 @@
 #include <iostream>
 #include <vector>
 #include <climits>
-
+#include <algorithm>
 using namespace std;
 
-void solve(int target,vector<int> &coins,int curr,int count,int &ans){
-  if(target==0){
-    ans = min(ans,count);
-    return;
+int solve(vector<int> &vec, int x, int idx,vector<vector<int>> &dp) {
+  if(idx == 0) {
+    if(x % vec[idx] == 0) return x / vec[idx];
+    else return -1;
   }
-  if(target<0) return;
-  if(curr>=coins.size()) return;
-  if(count>=ans) return;
 
-  // for(int i = curr; i<coins.size(); i++){
-  solve(target-coins[curr],coins,curr,count+1,ans);
-  solve(target,coins,curr+1,count,ans);
-  // }
+  if(dp[idx][x] != -1) return dp[idx][x];
 
+  int skip = solve(vec,x,idx-1,dp);
+  int not_skip = INT_MAX; 
+  if(vec[idx] <= x) {
+    not_skip = 1 + solve(vec,x-vec[idx],idx,dp); 
+  }
+
+  return dp[idx][x] = min(skip,not_skip);
 }
 
-int main(){
-  int n, target,ans=INT_MAX;
-  cin>>n>>target;
-  vector<vector<int>> dp(target+1, 0);
-  vector<int> coins(n);
-  for(int i = 0; i<n; i++){
-    cin>>coins[i];
+int comparefn(int l1, int l2) {
+  if(l1>l2) return 0;
+  else return 1;
+}
+
+int main() {
+  int n, x;
+  cin>>n>>x;
+
+  vector<int> vec(n);
+  vector<vector<int>> dp(n+1, vector<int>(x+1,-1));
+  for(int i = 0; i < n; i++) {
+    cin>>vec[i];
   }
-  solve(target,coins,0,0,ans);
-  cout<<(ans==INT_MAX?-1:ans)<<"\n";
+
+  sort(vec.begin(),vec.end(),comparefn);
+  cout<<solve(vec,x,n-1,dp);
 }
