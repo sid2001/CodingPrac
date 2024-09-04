@@ -3,36 +3,47 @@
 
 using namespace std;
 
-int minimumSteps(vector<int> &vec, int s) {
-  vector<vector<int>> dp(vec.size()+1,vector<int>(s+1,0));
-
-  for(int i = 0; i<vec.size();i++){
-    for(int j = 1; j <= s; j++){
-      dp[i][j] = 1e6 + 1;
-      int l = 1e6+1, ll = 1e6 +1;
-      if(i>0 && j >= vec[i])
-        l = dp[i-1][j - vec[i]];
-      if(j>=vec[i])
-        dp[i][j] = min(l,dp[i][j-vec[i]]);
-        dp[i][j] += 1;
-    }
+int solve(int n, vector<int> &dp, int curr = 0) {
+  //cout<<n<<"\n";
+  if(n==0) {
+    cout<<curr<<"\n";
+    return curr;
   }
-
-  return dp[vec.size()-1][s];
+  if(dp[n] != -1) return dp[n];
+  //cout<<n<<"\n";
+  int num = n;
+  int minStep = 1e6 + 1;
+  //vector<int> selected(11,0);
+  while(n>0) {
+    while(n%10==0){
+      n /=10;
+    } 
+      minStep = min(minStep,solve(num-n%10,dp, curr+1));
+      cout<<"minStep: "<<minStep<<"\n";
+    
+    n /= 10;
+  }
+  return dp[num] = minStep;
 }
-void solve(int n){
-  vector<int> vec;
-  int ss = n;
-  while(n>0){
-    if(n%10!=0){
-      vec.push_back(n%10);
+int solve2(int n) {
+  int num = n;
+  int count = 0;
+  while(n>0) {
+    int maxi = -1;
+    int nn = n;
+    while(nn>0) {
+      maxi = max(maxi,nn%10);
+      nn /= 10;
     }
-    n/=10;
+    n -= maxi;
+    count++;
   }
-  cout<<minimumSteps(vec,ss);
+  return count;
 }
 int main() {
   int n;
   cin>>n;
-  solve(n);
+  int ans = 1e6+1;
+  vector<int> dp(1e6+1,-1);
+  cout<<solve2(n);
 }
