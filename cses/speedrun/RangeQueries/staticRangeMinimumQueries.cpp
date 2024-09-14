@@ -53,6 +53,6 @@ int main() {
   for(int i = 0; i < q;i++) {
     int a,b;
     cin>>a>>b;
-    cout<<queryMin(root,a-1,b-1)<<"\n";
+    cout<<queryMin(root,a,b)<<"\n";
   }
 }
