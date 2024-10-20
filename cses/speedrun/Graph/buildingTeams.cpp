@@ -1,93 +1,55 @@
 #include <iostream>
 #include <vector>
 #include <queue>
-#include <set>
-#include <utility>
 
 using namespace std;
 
-pair<int,int> newTeam(vector<set<int>> &nTeam, int &teams,int curr){
-  set<int>::iterator itr;
-  int len = nTeam[curr].size();
-  itr = nTeam[curr].begin();
-  // if(nTeam[curr].size()==0){
-  //   if(teams==0){
-  //     return {1,++teams};
-  //   }else{
-  //     return {0,0};
-  //   }
-  // }
-  if(len==0&&teams>0){
-    // cout<<"hello"<<"\n";
-    return {0,0};
-  }
-  for(int i = 0; i<len; i++){
-    // cout<<"h"<<*itr<<"\n";
-    if(i!=*itr){
-      // cout<<"hello2"<<"\n";
-      return {0,i};
-    }
-    if(i==len-1&&i<teams-1){
-      return {0,i+1};
-    }
-    itr++;
-  }
-  return {1,++teams};
-}
-void bfs(vector<vector<int>> &adj, vector<int> &visited, vector<set<int>> &nTeam, int start,int &teams){
+int color(vector<vector<int>> &vec, vector<int> &colored, int curr) {
   queue<int> q;
-  q.push(start);
-  int team;
-  // pair<int,int> temp = newTeam(nTeam,teams,start);
-  //   if(!temp.first){
-  //     team = temp.second;
-  //   }else{
-  //     team = teams;
-  //   }
-  visited[start] = 1;
-  while(!q.empty()){
-    int curr = q.front();
-    pair<int,int> temp = newTeam(nTeam,teams,curr);
-    if(!temp.first){
-      team = temp.second;
-    }else{
-      team = teams-1;
-    }
-    cout<<"team: "<<team<<" curr: "<<curr<<" teams: "<<teams<<"\n";
-    visited[curr] = team+1;
+  q.push(curr);
+  int team = 0;
+
+  while(!q.empty()) {
+    int x = q.front();
     q.pop();
-    for(int i = 0; i<adj[curr].size(); i++){
-      if(!visited[adj[curr][i]]){
-        visited[adj[curr][i]] = 1;
-        q.push(adj[curr][i]);
-        nTeam[adj[curr][i]].insert(team);
+    if(colored[x] != -1) {
+      team = !colored[x];
+    }else{
+      colored[x] = team;
+      team = !team;
+    }
+    for(int i = 0; i < vec[x].size(); i++) {
+      if(colored[vec[x][i]] !=-1 && colored[vec[x][i]] != team) return -1;
+      else if(colored[vec[x][i]] == -1) {
+        colored[vec[x][i]] = team;
+        q.push(vec[x][i]);
       }
     }
   }
+  return 1;
 }
-int main(){
-  int pupils, relations;
-  cin >> pupils >> relations;
-  int teams = 0;
-  vector<vector<int>> adj(pupils);
-  vector<int> visited(pupils, 0);
-  vector<set<int>> nTeam(pupils);
 
-  for(int i = 0; i < relations; i++){
-    int x, y;
-    cin >> x >> y;
-    adj[x - 1].push_back(y - 1);
-    adj[y - 1].push_back(x - 1);
+int main() {
+  int n,m;
+  cin>>n>>m;
+  vector<vector<int>> vec(n+1);
+  int a,b;
+  for(int i = 0;i < m;i++){
+    cin>>a>>b;
+    vec[a].push_back(b);
+    vec[b].push_back(a);
   }
-
-  for(int i = 0; i < pupils; i++){
-    if(!visited[i]){
-      bfs(adj,visited,nTeam,i,teams);
-    }
+  vector<int> colored(n+1,-1);
+  int ans;
+  for(int i = 1;i <= n ; i++) {
+    if(colored[i] == -1)
+      ans = color(vec, colored, i);
+      if(ans == -1) {
+        cout<<"IMPOSSIBLE";
+        return 0;
+      }
   }
-  // cout<<"teams: "<<teams<<"\n";
-  for(int i = 0; i < pupils; i++){
-    cout<<visited[i]<<" ";
+  for(int i = 1; i <= n; i++) {
+    cout<<colored[i]+1<<" ";
   }
-  return 0;
 }

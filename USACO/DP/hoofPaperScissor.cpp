@@ -12,7 +12,7 @@ ll maxWins(vector<char> &vec,int k,vector<vector<ll>> &dp, int curr = 0,int h = 
   
   ll t1 = -1;
   ll t2 = -1;
-  if(dp[k][curr] != -1) return dp[k][curr];
+  //if(dp[k][curr] != -1) return dp[k][curr];
   if(vec[curr]=='H'){
     h++;
   }else if(vec[curr]=='P') {
