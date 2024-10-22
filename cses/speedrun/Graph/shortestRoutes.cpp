@@ -1,52 +1,56 @@
 #include <iostream>
+#include <climits>
 #include <vector>
-#include <utility>
 #include <queue>
 using namespace std;
+#define ull unsigned long long
 
-void display(vector<int> &vec) {
-  for(auto i : vec) {
-    cout<<i<<" ";
+template <class T> void display(vector<T> &vec){
+  int d = 0;
+  for(T v: vec){
+    if(!d++) continue;
+    cout<<v<<" ";
   }
-  cout<<"\n";
   return;
 }
-void solve(vector<vector<pair<int,int>>> &adj, vector<int> &dist) {
-  queue<int> q;
-  vector<int> visited(adj.size(),0);
-  q.push(1);
-  visited[1] = 1;
-  while(!q.empty()) {
-    int i = q.front();
-    q.pop(); 
-    for(auto j : adj[i]) {
-      if(dist[i-1] != 1e9+1){
-        if(dist[j.first -1] > dist[i-1]+j.second) {
-          q.push(j.first);
-        }
-        dist[j.first - 1] = min(dist[i- 1] + j.second, dist[j.first - 1]);
-      }
-      else{
-        dist[j.first - 1] = j.second;
-        q.push(j.first);
+
+void shortestPath(vector<vector<pair<ull,ull>>> &vec, vector<ull> &dist, priority_queue<pair<ull,ull>,vector<pair<ull,ull>>, greater<pair<ull,ull>>> &pq){
+  while(!pq.empty()){
+    ull x = pq.top().second;
+    ull currDist = pq.top().first;
+    pq.pop();
+
+    if(currDist > dist[x]) {
+      continue;
+    }
+
+    for(auto v : vec[x]) {
+      ull w = v.second;
+      ull node = v.first;
+      if(dist[node] > currDist + w){
+        dist[node] = currDist + w;
+        pq.push({dist[node],node});
       }
     }
   }
-  return;
 }
+
+using namespace std;
 int main() {
   int n,m;
   cin>>n>>m;
-  vector<vector<pair<int,int>>> adj(n+1);
-  vector<int> dist(n, 1e9 + 1);
-  dist[0] = 0;
-  int a,b,c;
+  vector<vector<pair<ull, ull>>> vec(n+1);
+  ull a,b,c;
   for(int i = 0; i < m; i++) {
     cin>>a>>b>>c;
-    adj[a].push_back({b,c});
+    vec[a].push_back({b,c});
   }
-  solve(adj,dist);
+  vector<ull> dist(n+1,ULLONG_MAX);
+  dist[1] = 0;
+  priority_queue<pair<ull,ull>, vector<pair<ull,ull>>, greater<pair<ull,ull>>> pq;
+  for(int i = 1; i < n +1; i++) {
+    pq.push({dist[i],i});
+  }
+  shortestPath(vec, dist,pq);
   display(dist);
-
-  return 0;
 }
