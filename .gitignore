@@ -1,5 +1,9 @@
 *.exe
 .vs
+!*.cpp
+!*.c
+!*.py
+!*.h
 .vscode
 IvaAndPav.cpp
 ReverseMadness.cpp

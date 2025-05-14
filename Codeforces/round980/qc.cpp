@@ -28,6 +28,8 @@ void solve() {
   }
   sort(vec1.begin(),vec1.end(),comperator1);
   sort(vec2.begin(),vec2.end(),comperator2);
+
+  
 }
 
 int main() {
