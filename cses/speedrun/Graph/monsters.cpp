@@ -1,84 +1,77 @@
 #include <iostream>
 #include <vector>
-#include <map>
 #include <queue>
+#include <climits>
 
 using namespace std;
-
-int dx[4] = {-1,0,1,0};
-int dy[4] = {0,1,0,-1};
-char dir[4] = {'D','L','U','R'};
-map<char,int> mp = {{'D',2},{'L',3},{'R',1},{'U',0}};
-
-void printPath(vector<vector<char>> &visited, int sx, int sy,int x, int y) {
-  cout<<"YES"<<"\n";
-  // cout<<"xy"<<x<<" "<<y<<"\n";
-  int xx,yy;
-  while(x!=sx||y!=sy) {
-    cout<<visited[sx][sy];
-    // cout<<" "<<sx<<" "<<sy<<"\n";
-    xx = sx;
-    yy = sy;
-    sx += dx[mp[visited[xx][yy]]];
-    sy += dy[mp[visited[xx][yy]]];
-    // cout<<" "<<sx<<" "<<sy<<"\n";
+int dx[] = {0, 1, 0, -1};
+int dy[] = {1, 0, -1, 0};
+vector<char> ans;
+char dir[] = {'R', 'D', 'L', 'U'};
+struct compare {
+  bool operator()(vector<int>& a , vector<int>& b) {
+    return a[0] > b[0];
   }
-  return;
-}
-
-int path(vector<vector<char>> &vec, int x, int y) {
-  queue<pair<int,int>> q;
-  vector<vector<char>> visited(vec.size(),vector<char>(vec[0].size(),'0'));
-  q.push({x,y});
-  while(!q.empty()) {
-    int cx = q.front().first;
-    int cy = q.front().second;
-    q.pop();
-    for(int i = 0; i < 4; i++) {
-      int nx = cx + dx[i];
-      int ny = cy + dy[i];
-      if(nx < vec.size()-1 && ny < vec[0].size()-1 && visited[nx][ny] == '0' && vec[nx][ny] != '#') {
-        if(vec[nx][ny] == 'A') {
-          visited[nx][ny] = dir[i];
-          // cout<<nx<<" "<<ny<<" "<<dir[i]<<"\n";
-          printPath(visited,nx,ny,x,y);
-          return 1;
-        }else if(vec[nx][ny] == '.') {
-          visited[nx][ny] = dir[i];
-          // cout<<nx<<" "<<ny<<" "<<dir[i]<<"\n";
-          q.push({nx,ny});
-        }else return -1;
-      }
+};
+bool flag = false;
+int count = 0;
+void dfs(vector<vector<char>>& vec, vector<vector<int>>& monsters, int time, int cx , int cy, int n, int m) {
+  if(cx == n - 1 || cx == 0 || cy == m - 1 || cy == 0) {
+    flag = true;
+    return;
+  }
+  monsters[cx][cy] = time;
+  for(int i = 0; i < 4; i++) {
+    int nx = cx + dx[i];
+    int ny = cy + dy[i];
+    if(nx < n && nx >= 0 && ny >= 0 && ny < m && vec[nx][ny] == '.' && monsters[nx][ny] > time + 1) {
+        ans.push_back(dir[i]);
+        dfs(vec, monsters, time + 1, nx, ny, n, m);
+        if(flag) return;
+        ans.pop_back();
     }
   }
-  return 0;
 }
-
 int main() {
-  int m,n;
-  cin>>m>>n;
-  vector<vector<char>> vec(m,vector<char>(n));
-  char c;
-  vector<vector<int>> tar;
+  std::ios_base::sync_with_stdio(false);
+  int n, m;
+  cin>>n>>m;
+  vector<vector<char>> vec(n, vector<char>(m));
+  priority_queue<vector<int>, vector<vector<int>>, compare> pq;
+  vector<vector<int>> monsters(n,vector<int>(m,INT_MAX));
   int sx, sy;
-  for(int i = 0;i<m;i++) {
-    for(int j = 0; j < n; j++) {
+  for(int i = 0; i < n; i++)
+    for(int j = 0; j < m; j++) {
       cin>>vec[i][j];
-      if((i==m-1||j==n-1)&&vec[i][j]=='.'){
-        tar.push_back({i,j});
-      }
       if(vec[i][j] == 'A') {
-        sx = i;
-        sy = j;
+        sx = i; sy = j;
+      }
+      if(vec[i][j] == 'M') {
+        pq.push({0, i, j});
+      }
+    }
+
+  while(!pq.empty()) {
+    auto curr = pq.top();
+    pq.pop();
+    if(monsters[curr[1]][curr[2]] < curr[0]) continue;
+    monsters[curr[1]][curr[2]] = curr[0];
+
+    for(int i = 0; i < 4; i++) {
+      int nx = curr[1] + dx[i];
+      int ny = curr[2] + dy[i];
+      if(nx < n && nx >= 0 && ny >= 0 && ny < m && vec[nx][ny] == '.' && monsters[nx][ny] > curr[0] + 1) {
+        monsters[nx][ny] = curr[0] + 1;
+        pq.push({curr[0] + 1, nx, ny});
       }
     }
   }
-  for(int i = 0; i < tar.size(); i++) {
-    int ans = path(vec,tar[i][0],tar[i][1]);
-    if(ans == 1) {
-      return 0;
-    }
-  }
-  cout<<"NO"<<endl;
-  return 0;
+    dfs(vec, monsters, 0, sx, sy,n ,m);
+    if(!flag) cout<<"NO";
+    else{
+        cout<<"YES"<<"\n";
+        cout<<ans.size()<<"\n";
+        for(auto& a : ans) cout<<a;  
+    } 
+    return 0;
 }
